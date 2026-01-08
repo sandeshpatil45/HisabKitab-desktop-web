@@ -3,6 +3,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 
 // Screens
 import Login from './screens/Login';
+import Register from './screens/Register';
 import Tables from './screens/Tables';
 import Billing from './screens/Billing';
 import Menu from './screens/Menu';
@@ -18,6 +19,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         
         <Route
           path="/tables"

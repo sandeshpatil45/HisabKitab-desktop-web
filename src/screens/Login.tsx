@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { apiService } from '../api/apiService';
 import { validation } from '../utils/validation';
 
@@ -96,8 +96,13 @@ const Login: React.FC = () => {
           </button>
         </form>
 
-        <div className="mt-6 text-center text-sm text-gray-500">
-          <p>Use your restaurant credentials to login</p>
+        <div className="mt-6 text-center">
+          <p className="text-gray-600">
+            Don't have an account?{' '}
+            <Link to="/register" className="text-primary hover:text-green-700 font-semibold">
+              Register here
+            </Link>
+          </p>
         </div>
       </div>
     </div>

@@ -16,9 +16,14 @@ class ApiService {
 
   private async handleResponse<T>(response: Response): Promise<T> {
     if (!response.ok) {
-      const error = await response.json().catch(() => ({
-        message: response.statusText || 'An error occurred',
-      }));
+      let errorMessage = response.statusText || 'An error occurred';
+      
+      try {
+        const error = await response.json();
+        errorMessage = error.message || error.error || errorMessage;
+      } catch (e) {
+        // If response is not JSON, use statusText
+      }
       
       if (response.status === 401) {
         // Unauthorized - clear token and redirect to login
@@ -27,7 +32,7 @@ class ApiService {
         window.location.href = '/login';
       }
       
-      throw new Error(error.message || `HTTP ${response.status}: ${response.statusText}`);
+      throw new Error(errorMessage);
     }
 
     const contentType = response.headers.get('content-type');
@@ -53,15 +58,31 @@ class ApiService {
 
     const url = `${this.baseUrl}${endpoint}`;
     
+    // Create timeout promise
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      setTimeout(() => {
+        reject(new Error('Request timeout. Please check if the backend server is running.'));
+      }, 10000); // 10 second timeout
+    });
+    
     try {
-      const response = await fetch(url, {
-        ...options,
-        headers: { ...headers, ...(options.headers as Record<string, string> || {}) },
-      });
+      const response = await Promise.race([
+        fetch(url, {
+          ...options,
+          headers: { ...headers, ...(options.headers as Record<string, string> || {}) },
+        }),
+        timeoutPromise
+      ]);
 
       return this.handleResponse<T>(response);
-    } catch (error) {
+    } catch (error: any) {
       console.error('API Request Error:', error);
+      
+      // Handle network errors
+      if (error instanceof TypeError && error.message === 'Failed to fetch') {
+        throw new Error('Cannot connect to server. Please check if the backend is running.');
+      }
+      
       throw error;
     }
   }
