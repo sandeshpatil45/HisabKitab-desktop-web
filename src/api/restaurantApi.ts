@@ -1,0 +1,149 @@
+// Restaurant API endpoints
+
+import apiService from './apiService';
+import type {
+  Table,
+  MenuItem,
+  Order,
+  Staff,
+  KitchenOrder,
+  MenuCategory,
+} from '../types/restaurant';
+import type { RestaurantSettings, Invoice, Expense, Report } from '../types';
+
+class RestaurantApi {
+  // Settings
+  async getSettings(): Promise<RestaurantSettings> {
+    return apiService.get<RestaurantSettings>('/restaurant/settings');
+  }
+
+  async updateSettings(settings: Partial<RestaurantSettings>): Promise<RestaurantSettings> {
+    return apiService.post<RestaurantSettings>('/restaurant/settings', settings);
+  }
+
+  // Tables
+  async getTables(): Promise<Table[]> {
+    return apiService.get<Table[]>('/restaurant/tables');
+  }
+
+  async createTable(tableData: Partial<Table>): Promise<Table> {
+    return apiService.post<Table>('/restaurant/tables', tableData);
+  }
+
+  async updateTable(id: string, tableData: Partial<Table>): Promise<Table> {
+    return apiService.put<Table>(`/restaurant/tables/${id}`, tableData);
+  }
+
+  async deleteTable(id: string): Promise<void> {
+    return apiService.delete<void>(`/restaurant/tables/${id}`);
+  }
+
+  async getTableOrders(tableId: string): Promise<Order[]> {
+    return apiService.get<Order[]>(`/restaurant/tables/${tableId}/orders`);
+  }
+
+  // Menu
+  async getMenu(): Promise<MenuItem[]> {
+    return apiService.get<MenuItem[]>('/restaurant/menu');
+  }
+
+  async getMenuCategories(): Promise<MenuCategory[]> {
+    return apiService.get<MenuCategory[]>('/restaurant/menu/categories');
+  }
+
+  async bulkAddMenu(items: Partial<MenuItem>[]): Promise<MenuItem[]> {
+    return apiService.post<MenuItem[]>('/restaurant/menu/bulk', { items });
+  }
+
+  async createMenuItem(item: Partial<MenuItem>): Promise<MenuItem> {
+    return apiService.post<MenuItem>('/restaurant/menu', item);
+  }
+
+  async updateMenuItem(id: string, item: Partial<MenuItem>): Promise<MenuItem> {
+    return apiService.put<MenuItem>(`/restaurant/menu/${id}`, item);
+  }
+
+  async deleteMenuItem(id: string): Promise<void> {
+    return apiService.delete<void>(`/restaurant/menu/${id}`);
+  }
+
+  // Orders
+  async createOrder(orderData: Partial<Order>): Promise<Order> {
+    return apiService.post<Order>('/restaurant/orders', orderData);
+  }
+
+  async updateOrderStatus(orderId: string, status: string): Promise<Order> {
+    return apiService.put<Order>(`/restaurant/orders/${orderId}/status`, { status });
+  }
+
+  async finalizeOrder(orderId: string, finalData?: any): Promise<Invoice> {
+    return apiService.post<Invoice>(`/restaurant/orders/${orderId}/finalize`, finalData);
+  }
+
+  async getKitchenOrders(): Promise<KitchenOrder[]> {
+    return apiService.get<KitchenOrder[]>('/restaurant/kitchen/orders');
+  }
+
+  // Staff
+  async getStaff(): Promise<Staff[]> {
+    return apiService.get<Staff[]>('/restaurant/staff');
+  }
+
+  async createStaff(staffData: Partial<Staff>): Promise<Staff> {
+    return apiService.post<Staff>('/restaurant/staff', staffData);
+  }
+
+  async updateStaff(id: string, staffData: Partial<Staff>): Promise<Staff> {
+    return apiService.put<Staff>(`/restaurant/staff/${id}`, staffData);
+  }
+
+  async deleteStaff(id: string): Promise<void> {
+    return apiService.delete<void>(`/restaurant/staff/${id}`);
+  }
+
+  // Bills/Invoices
+  async createBill(billData: Partial<Invoice>): Promise<Invoice> {
+    return apiService.post<Invoice>('/bills', billData);
+  }
+
+  async getBills(filters?: any): Promise<Invoice[]> {
+    const queryParams = new URLSearchParams(filters).toString();
+    const endpoint = queryParams ? `/bills?${queryParams}` : '/bills';
+    return apiService.get<Invoice[]>(endpoint);
+  }
+
+  async getBillDetails(id: string): Promise<Invoice> {
+    return apiService.get<Invoice>(`/bills/${id}`);
+  }
+
+  // Reports
+  async getSalesReport(startDate: string, endDate: string): Promise<Report> {
+    return apiService.get<Report>(`/reports/sales?startDate=${startDate}&endDate=${endDate}`);
+  }
+
+  async getOrdersReport(startDate: string, endDate: string): Promise<any> {
+    return apiService.get<any>(`/reports/orders?startDate=${startDate}&endDate=${endDate}`);
+  }
+
+  async getItemsReport(startDate: string, endDate: string): Promise<any> {
+    return apiService.get<any>(`/reports/items?startDate=${startDate}&endDate=${endDate}`);
+  }
+
+  async getExpensesReport(startDate: string, endDate: string): Promise<any> {
+    return apiService.get<any>(`/reports/expenses?startDate=${startDate}&endDate=${endDate}`);
+  }
+
+  // Expenses
+  async createExpense(expenseData: Partial<Expense>): Promise<Expense> {
+    return apiService.post<Expense>('/restaurant/expenses', expenseData);
+  }
+
+  async getExpenses(filters?: any): Promise<Expense[]> {
+    const queryParams = new URLSearchParams(filters).toString();
+    const endpoint = queryParams ? `/restaurant/expenses?${queryParams}` : '/restaurant/expenses';
+    return apiService.get<Expense[]>(endpoint);
+  }
+}
+
+export const restaurantApi = new RestaurantApi();
+export default restaurantApi;
