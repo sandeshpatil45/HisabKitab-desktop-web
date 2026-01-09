@@ -124,25 +124,25 @@ const Tables: React.FC = () => {
     <div className="space-y-6">
       {/* Status Summary */}
       <div className="flex items-center justify-between">
-          <div className="flex space-x-4">
-            <div className="bg-green-100 px-4 py-2 rounded-lg">
-              <span className="text-green-700 font-semibold">{status.free} Free</span>
-            </div>
-            <div className="bg-red-100 px-4 py-2 rounded-lg">
-              <span className="text-red-700 font-semibold">{status.occupied} Occupied</span>
-            </div>
-            <div className="bg-yellow-100 px-4 py-2 rounded-lg">
-              <span className="text-yellow-700 font-semibold">{status.billPending} Bill Pending</span>
-            </div>
+        <div className="flex space-x-4">
+          <div className="bg-green-100 px-4 py-2 rounded-lg">
+            <span className="text-green-700 font-semibold">{status.free} Free</span>
           </div>
+          <div className="bg-red-100 px-4 py-2 rounded-lg">
+            <span className="text-red-700 font-semibold">{status.occupied} Occupied</span>
+          </div>
+          <div className="bg-yellow-100 px-4 py-2 rounded-lg">
+            <span className="text-yellow-700 font-semibold">{status.billPending} Bill Pending</span>
+          </div>
+        </div>
 
-          {canManage && (
-            <button
-              onClick={() => setShowAddModal(true)}
-              className="btn-primary"
-            >
-              + Add Table
-            </button>
+        {canManage && (
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="btn-primary"
+          >
+            + Add Table
+          </button>
           )}
         </div>
 
@@ -185,7 +185,7 @@ const Tables: React.FC = () => {
             ))}
           </div>
         )}
-      </div>
+      
 
       {/* Add Table Modal */}
       {showAddModal && (
