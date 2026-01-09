@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { apiService } from '../api/apiService';
 import { validation } from '../utils/validation';
 
-const Register: React.FC = () => {
+export default function Register() {
   const [formData, setFormData] = useState({
     username: '',
     password: '',
@@ -257,6 +257,4 @@ const Register: React.FC = () => {
       </div>
     </div>
   );
-};
-
-export default Register;
+}

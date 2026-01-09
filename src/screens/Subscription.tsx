@@ -1,7 +1,6 @@
-import React from 'react';
 import { roleCheck } from '../utils/roleCheck';
 
-const Subscription: React.FC = () => {
+export default function Subscription() {
   const canAccess = roleCheck.isOwner();
 
   if (!canAccess) {
@@ -64,6 +63,4 @@ const Subscription: React.FC = () => {
       </div>
     </div>
   );
-};
-
-export default Subscription;
+}

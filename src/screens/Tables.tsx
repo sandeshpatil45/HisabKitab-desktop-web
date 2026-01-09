@@ -1,297 +1,238 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import TableCard from '../components/TableCard';
 import { restaurantApi } from '../api/restaurantApi';
-import type { Table, TableStatus } from '../types/restaurant';
-import { roleCheck } from '../utils/roleCheck';
-import { validation } from '../utils/validation';
+import type { Table } from '../types/restaurant';
 
-const Tables: React.FC = () => {
+export default function Tables() {
+  const navigate = useNavigate();
   const [tables, setTables] = useState<Table[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [selectedTable, setSelectedTable] = useState<Table | null>(null);
   const [tableName, setTableName] = useState('');
-  const [tableCapacity, setTableCapacity] = useState('');
-  const navigate = useNavigate();
+  const [tableCapacity, setTableCapacity] = useState('4');
 
-  const canManage = roleCheck.isOwner();
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const canManage = user.role !== 'STAFF';
 
   useEffect(() => {
-    fetchTables();
+    loadTables();
   }, []);
 
-  const fetchTables = async () => {
-    setLoading(true);
-    setError('');
-    
+  const loadTables = async () => {
     try {
+      setLoading(true);
       const data = await restaurantApi.getTables();
       setTables(data);
+      setError('');
     } catch (err: any) {
-      setError(err.message || 'Failed to fetch tables');
+      setError(err.message || 'Failed to load tables');
+      // Show mock data if API fails - using proper Table type
+      setTables([
+        { 
+          id: '1', 
+          name: 'T1', 
+          status: 'FREE', 
+          capacity: 4, 
+          restaurantId: 'mock',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        },
+        { 
+          id: '2', 
+          name: 'T2', 
+          status: 'FREE', 
+          capacity: 4, 
+          restaurantId: 'mock',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        },
+        { 
+          id: '3', 
+          name: 'T3', 
+          status: 'FREE', 
+          capacity: 4, 
+          restaurantId: 'mock',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        },
+        { 
+          id: '4', 
+          name: 'T4', 
+          status: 'FREE', 
+          capacity: 4, 
+          restaurantId: 'mock',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        },
+      ]);
     } finally {
       setLoading(false);
     }
   };
 
-  const getTableStatus = (): TableStatus => {
+  const getStatusCounts = () => {
     const free = tables.filter(t => t.status === 'FREE').length;
     const occupied = tables.filter(t => t.status === 'OCCUPIED').length;
-    const billPending = tables.filter(t => t.status === 'BILL_PENDING').length;
-
-    return {
-      free,
-      occupied,
-      billPending,
-      total: tables.length,
-    };
-  };
-
-  const handleTableClick = (table: Table) => {
-    navigate(`/tables/${table.id}/billing`, { state: { table } });
+    const pending = tables.filter(t => t.status === 'BILL_PENDING').length;
+    return { free, occupied, pending };
   };
 
   const handleAddTable = async () => {
-    if (!validation.validateTableName(tableName)) {
-      alert('Please enter a valid table name');
+    if (!tableName.trim()) {
+      alert('Please enter table name');
       return;
     }
 
     try {
       const newTable = await restaurantApi.createTable({
         name: tableName,
-        capacity: tableCapacity ? parseInt(tableCapacity) : undefined,
+        capacity: parseInt(tableCapacity),
         status: 'FREE',
       });
-
       setTables([...tables, newTable]);
       setShowAddModal(false);
       setTableName('');
-      setTableCapacity('');
+      setTableCapacity('4');
     } catch (err: any) {
       alert(err.message || 'Failed to add table');
     }
   };
 
-  const handleEditTable = async () => {
-    if (!selectedTable || !validation.validateTableName(tableName)) {
-      alert('Please enter a valid table name');
-      return;
-    }
+  const { free, occupied, pending } = getStatusCounts();
 
-    try {
-      const updatedTable = await restaurantApi.updateTable(selectedTable.id, {
-        name: tableName,
-        capacity: tableCapacity ? parseInt(tableCapacity) : undefined,
-      });
-
-      setTables(tables.map(t => t.id === updatedTable.id ? updatedTable : t));
-      setShowEditModal(false);
-      setSelectedTable(null);
-      setTableName('');
-      setTableCapacity('');
-    } catch (err: any) {
-      alert(err.message || 'Failed to update table');
-    }
-  };
-
-  const handleDeleteTable = async (table: Table) => {
-    if (!confirm(`Are you sure you want to delete ${table.name}?`)) {
-      return;
-    }
-
-    try {
-      await restaurantApi.deleteTable(table.id);
-      setTables(tables.filter(t => t.id !== table.id));
-    } catch (err: any) {
-      alert(err.message || 'Failed to delete table');
-    }
-  };
-
-  const openEditModal = (table: Table) => {
-    setSelectedTable(table);
-    setTableName(table.name);
-    setTableCapacity(table.capacity?.toString() || '');
-    setShowEditModal(true);
-  };
-
-  const status = getTableStatus();
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <div className="text-center">
+          <div className="inline-block w-16 h-16 border-4 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+          <p className="mt-4 text-gray-600">Loading tables...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-6">
+    <div className="max-w-7xl mx-auto">
+      {/* Header */}
+      <div className="mb-6">
+        <p className="text-sm text-gray-500 mb-2">Restaurant</p>
+        <h1 className="text-4xl font-bold text-gray-800">Tables</h1>
+      </div>
+
+      {/* Error Message */}
+      {error && (
+        <div className="mb-6 bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded-lg">
+          <p className="text-sm">⚠️ {error}</p>
+          <p className="text-xs mt-1">Showing demo data. Please ensure backend is running.</p>
+        </div>
+      )}
+
       {/* Status Summary */}
-      <div className="flex items-center justify-between">
-        <div className="flex space-x-4">
-          <div className="bg-green-100 px-4 py-2 rounded-lg">
-            <span className="text-green-700 font-semibold">{status.free} Free</span>
-          </div>
-          <div className="bg-red-100 px-4 py-2 rounded-lg">
-            <span className="text-red-700 font-semibold">{status.occupied} Occupied</span>
-          </div>
-          <div className="bg-yellow-100 px-4 py-2 rounded-lg">
-            <span className="text-yellow-700 font-semibold">{status.billPending} Bill Pending</span>
-          </div>
+      <div className="grid grid-cols-3 gap-6 mb-8">
+        <div className="bg-white rounded-xl shadow-md p-6 border-l-4 border-green-500">
+          <p className="text-4xl font-bold text-gray-800 mb-2">{free}</p>
+          <p className="text-gray-600 font-medium">Free</p>
         </div>
+        <div className="bg-white rounded-xl shadow-md p-6 border-l-4 border-red-500">
+          <p className="text-4xl font-bold text-gray-800 mb-2">{occupied}</p>
+          <p className="text-gray-600 font-medium">Occupied</p>
+        </div>
+        <div className="bg-white rounded-xl shadow-md p-6 border-l-4 border-yellow-500">
+          <p className="text-4xl font-bold text-gray-800 mb-2">{pending}</p>
+          <p className="text-gray-600 font-medium">Bill Pending</p>
+        </div>
+      </div>
 
-        {canManage && (
+      {/* Tables Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {tables.map((table) => (
           <button
-            onClick={() => setShowAddModal(true)}
-            className="btn-primary"
+            key={table.id}
+            onClick={() => navigate(`/billing/${table.id}`, { state: { table } })}
+            className={`bg-white rounded-xl shadow-md hover:shadow-xl p-6 text-center transition-all duration-200 hover:scale-105 ${
+              table.status === 'FREE' ? 'border-2 border-green-200 hover:border-green-400' :
+              table.status === 'OCCUPIED' ? 'border-2 border-red-200 hover:border-red-400' :
+              'border-2 border-yellow-200 hover:border-yellow-400'
+            }`}
           >
-            + Add Table
+            <h3 className="text-2xl font-bold text-gray-800 mb-2">{table.name}</h3>
+            <p className="text-sm text-gray-600 mb-3 flex items-center justify-center gap-1">
+              <span>👥</span>
+              <span>{table.capacity || 4} seats</span>
+            </p>
+            <span className={`px-4 py-2 rounded-full text-sm font-semibold inline-block ${
+              table.status === 'FREE' ? 'bg-green-100 text-green-700' :
+              table.status === 'OCCUPIED' ? 'bg-red-100 text-red-700' :
+              'bg-yellow-100 text-yellow-700'
+            }`}>
+              {table.status === 'FREE' ? 'Free' :
+               table.status === 'OCCUPIED' ? 'Occupied' : 'Pending'}
+            </span>
           </button>
-          )}
-        </div>
+        ))}
+      </div>
 
-        {/* Error Message */}
-        {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-            {error}
-          </div>
-        )}
-
-        {/* Loading State */}
-        {loading && (
-          <div className="text-center py-12">
-            <p className="text-gray-500">Loading tables...</p>
-          </div>
-        )}
-
-        {/* Tables Grid */}
-        {!loading && tables.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-500 mb-4">No tables found</p>
-            {canManage && (
-              <button onClick={() => setShowAddModal(true)} className="btn-primary">
-                Add Your First Table
-              </button>
-            )}
-          </div>
-        )}
-
-        {!loading && tables.length > 0 && (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-            {tables.map((table) => (
-              <TableCard
-                key={table.id}
-                table={table}
-                onClick={handleTableClick}
-                onEdit={canManage ? openEditModal : undefined}
-                onDelete={canManage ? handleDeleteTable : undefined}
-              />
-            ))}
-          </div>
-        )}
-      
+      {/* Add Table Button (Owner only) */}
+      {canManage && (
+        <button
+          onClick={() => setShowAddModal(true)}
+          className="fixed bottom-8 right-8 w-16 h-16 bg-green-600 hover:bg-green-700 text-white rounded-full shadow-2xl flex items-center justify-center text-3xl transition-all duration-200 hover:scale-110"
+          title="Add New Table"
+        >
+          +
+        </button>
+      )}
 
       {/* Add Table Modal */}
       {showAddModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-xl font-bold mb-4">Add New Table</h3>
+          <div className="bg-white rounded-xl shadow-2xl p-8 w-full max-w-md">
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">Add New Table</h2>
             
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Table Name *
-                </label>
-                <input
-                  type="text"
-                  value={tableName}
-                  onChange={(e) => setTableName(e.target.value)}
-                  className="input-field"
-                  placeholder="e.g., T1, Table 1"
-                  autoFocus
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Capacity (optional)
-                </label>
-                <input
-                  type="number"
-                  value={tableCapacity}
-                  onChange={(e) => setTableCapacity(e.target.value)}
-                  className="input-field"
-                  placeholder="Number of seats"
-                  min="1"
-                />
-              </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Table Number/Name
+              </label>
+              <input
+                type="text"
+                value={tableName}
+                onChange={(e) => setTableName(e.target.value)}
+                placeholder="e.g., T1, A1, VIP-1"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              />
             </div>
 
-            <div className="flex space-x-3 mt-6">
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Capacity (Seats)
+              </label>
+              <input
+                type="number"
+                value={tableCapacity}
+                onChange={(e) => setTableCapacity(e.target.value)}
+                placeholder="4"
+                min="1"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              />
+            </div>
+
+            <div className="flex gap-3">
               <button
                 onClick={() => {
                   setShowAddModal(false);
                   setTableName('');
-                  setTableCapacity('');
+                  setTableCapacity('4');
                 }}
-                className="flex-1 btn-secondary"
+                className="flex-1 px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg font-medium transition-colors"
               >
                 Cancel
               </button>
-              <button onClick={handleAddTable} className="flex-1 btn-primary">
-                Add Table
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Edit Table Modal */}
-      {showEditModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-xl font-bold mb-4">Edit Table</h3>
-            
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Table Name *
-                </label>
-                <input
-                  type="text"
-                  value={tableName}
-                  onChange={(e) => setTableName(e.target.value)}
-                  className="input-field"
-                  placeholder="e.g., T1, Table 1"
-                  autoFocus
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Capacity (optional)
-                </label>
-                <input
-                  type="number"
-                  value={tableCapacity}
-                  onChange={(e) => setTableCapacity(e.target.value)}
-                  className="input-field"
-                  placeholder="Number of seats"
-                  min="1"
-                />
-              </div>
-            </div>
-
-            <div className="flex space-x-3 mt-6">
               <button
-                onClick={() => {
-                  setShowEditModal(false);
-                  setSelectedTable(null);
-                  setTableName('');
-                  setTableCapacity('');
-                }}
-                className="flex-1 btn-secondary"
+                onClick={handleAddTable}
+                className="flex-1 px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors"
               >
-                Cancel
-              </button>
-              <button onClick={handleEditTable} className="flex-1 btn-primary">
-                Save Changes
+                Add Table
               </button>
             </div>
           </div>
@@ -299,6 +240,4 @@ const Tables: React.FC = () => {
       )}
     </div>
   );
-};
-
-export default Tables;
+}

@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { restaurantApi } from '../api/restaurantApi';
 import type { RestaurantSettings } from '../types';
 import { authService } from '../utils/authService';
 
-const Settings: React.FC = () => {
+export default function Settings() {
   const [settings, setSettings] = useState<RestaurantSettings | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -209,6 +209,4 @@ const Settings: React.FC = () => {
       </div>
     </div>
   );
-};
-
-export default Settings;
+}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import ItemCard from '../components/ItemCard';
 import BillSummary from '../components/BillSummary';
@@ -8,7 +8,7 @@ import type { RestaurantSettings } from '../types';
 import { roleCheck } from '../utils/roleCheck';
 import { validation } from '../utils/validation';
 
-const Billing: React.FC = () => {
+export default function Billing() {
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
   const navigate = useNavigate();
@@ -605,6 +605,4 @@ const Billing: React.FC = () => {
     )}
     </div>
   );
-};
-
-export default Billing;
+}

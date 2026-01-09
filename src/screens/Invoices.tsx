@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { restaurantApi } from '../api/restaurantApi';
 import type { Invoice } from '../types';
 import { roleCheck } from '../utils/roleCheck';
 
-const Invoices: React.FC = () => {
+export default function Invoices() {
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -119,6 +119,4 @@ const Invoices: React.FC = () => {
       )}
     </div>
   );
-};
-
-export default Invoices;
+}
