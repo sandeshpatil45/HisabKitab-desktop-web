@@ -111,6 +111,14 @@ class ApiService {
     return this.request<T>(endpoint, { ...options, method: 'DELETE' });
   }
 
+  async patch<T>(endpoint: string, data?: any, options?: RequestInit): Promise<T> {
+    return this.request<T>(endpoint, {
+      ...options,
+      method: 'PATCH',
+      body: data ? JSON.stringify(data) : undefined,
+    });
+  }
+
   // Auth endpoints
   async login(username: string, password: string): Promise<AuthResponse> {
     const backendResponse: any = await this.post('/auth/login', {

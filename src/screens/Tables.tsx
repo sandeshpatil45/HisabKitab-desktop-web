@@ -9,11 +9,14 @@ export default function Tables() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showActionModal, setShowActionModal] = useState(false);
+  const [selectedTable, setSelectedTable] = useState<Table | null>(null);
   const [tableName, setTableName] = useState('');
   const [tableCapacity, setTableCapacity] = useState('4');
 
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   const canManage = user.role !== 'STAFF';
+  const role = localStorage.getItem('role') || user.role || '';
 
   useEffect(() => {
     loadTables();
@@ -22,8 +25,20 @@ export default function Tables() {
   const loadTables = async () => {
     try {
       setLoading(true);
-      const data = await restaurantApi.getTables();
-      setTables(data);
+      const response = await restaurantApi.getTables();
+      
+      // Backend returns: { success: true, data: [...] } or direct array
+      let tablesData: Table[] = [];
+      
+      if (response && typeof response === 'object') {
+        if ('data' in response && Array.isArray((response as any).data)) {
+          tablesData = (response as any).data;
+        } else if (Array.isArray(response)) {
+          tablesData = response;
+        }
+      }
+      
+      setTables(tablesData);
       setError('');
     } catch (err: any) {
       setError(err.message || 'Failed to load tables');
@@ -99,6 +114,30 @@ export default function Tables() {
     }
   };
 
+  const handleTableClick = (table: Table) => {
+    setSelectedTable(table);
+    setShowActionModal(true);
+  };
+
+  const handleMenuOrder = () => {
+    if (!selectedTable) return;
+    setShowActionModal(false);
+    navigate(`/tables/${selectedTable.id}/menu-order`, { state: { table: selectedTable } });
+  };
+
+  const handleInvoice = () => {
+    if (!selectedTable) return;
+    
+    if (role === 'STAFF') {
+      alert('Access denied. Only managers can view invoices.');
+      setShowActionModal(false);
+      return;
+    }
+    
+    setShowActionModal(false);
+    navigate(`/tables/${selectedTable.id}/invoice`, { state: { table: selectedTable } });
+  };
+
   const { free, occupied, pending } = getStatusCounts();
 
   if (loading) {
@@ -149,7 +188,7 @@ export default function Tables() {
         {tables.map((table) => (
           <button
             key={table.id}
-            onClick={() => navigate(`/billing/${table.id}`, { state: { table } })}
+            onClick={() => handleTableClick(table)}
             className={`bg-white rounded-xl shadow-md hover:shadow-xl p-6 text-center transition-all duration-200 hover:scale-105 ${
               table.status === 'FREE' ? 'border-2 border-green-200 hover:border-green-400' :
               table.status === 'OCCUPIED' ? 'border-2 border-red-200 hover:border-red-400' :
@@ -233,6 +272,53 @@ export default function Tables() {
                 className="flex-1 px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors"
               >
                 Add Table
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Action Modal */}
+      {showActionModal && selectedTable && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-2xl p-8 w-full max-w-md">
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">
+              {selectedTable.name}
+            </h2>
+            <p className="text-gray-600 mb-6">
+              {selectedTable.capacity} Seats • Status: {selectedTable.status}
+            </p>
+
+            <div className="space-y-3">
+              {/* Menu / Order Button - Available to all users */}
+              <button
+                onClick={handleMenuOrder}
+                className="w-full px-6 py-4 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+              >
+                <span className="text-xl">📋</span>
+                <span>Menu / Order</span>
+              </button>
+
+              {/* Invoice Button - Manager/Owner only */}
+              {role !== 'STAFF' && (
+                <button
+                  onClick={handleInvoice}
+                  className="w-full px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+                >
+                  <span className="text-xl">💰</span>
+                  <span>Invoice</span>
+                </button>
+              )}
+
+              {/* Cancel Button */}
+              <button
+                onClick={() => {
+                  setShowActionModal(false);
+                  setSelectedTable(null);
+                }}
+                className="w-full px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg font-medium transition-colors"
+              >
+                Cancel
               </button>
             </div>
           </div>

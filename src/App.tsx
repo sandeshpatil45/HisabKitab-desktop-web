@@ -1,10 +1,20 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import ProtectedRoute from './components/ProtectedRoute';
+import OnboardingLayout from './components/OnboardingLayout';
 
 // Screens
 import Login from './screens/Login';
 import Register from './screens/Register';
+
+// Onboarding
+import BusinessDetailsScreen from './screens/onboarding/BusinessDetailsScreen';
+import BulkMenuAddScreen from './screens/onboarding/BulkMenuAddScreen';
+import SubscriptionScreen from './screens/onboarding/SubscriptionScreen';
+
+// Main App
 import Tables from './screens/Tables';
+import MenuOrderScreen from './screens/MenuOrderScreen';
+import InvoiceScreen from './screens/InvoiceScreen';
 import Billing from './screens/Billing';
 import Menu from './screens/Menu';
 import Staff from './screens/Staff';
@@ -21,6 +31,13 @@ function App() {
         {/* Public Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+
+        {/* Onboarding Routes */}
+        <Route path="/onboarding" element={<OnboardingLayout />}>
+          <Route path="business-details" element={<BusinessDetailsScreen />} />
+          <Route path="bulk-menu" element={<BulkMenuAddScreen />} />
+          <Route path="subscription" element={<SubscriptionScreen />} />
+        </Route>
         
         {/* Protected Routes - Wrapped in ProtectedRoute which adds Layout */}
         <Route path="/" element={<Navigate to="/tables" replace />} />
@@ -29,6 +46,22 @@ function App() {
           element={
             <ProtectedRoute>
               <Tables />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/tables/:id/menu-order" 
+          element={
+            <ProtectedRoute>
+              <MenuOrderScreen />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/tables/:id/invoice" 
+          element={
+            <ProtectedRoute>
+              <InvoiceScreen />
             </ProtectedRoute>
           } 
         />

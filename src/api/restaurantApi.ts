@@ -67,9 +67,9 @@ class RestaurantApi {
     return apiService.delete<void>(`/restaurant/menu/${id}`);
   }
 
-  // Orders
-  async createOrder(orderData: Partial<Order>): Promise<Order> {
-    return apiService.post<Order>('/restaurant/orders', orderData);
+  // Orders - Updated for KOT flow
+  async createOrder(data: { tableId: string | number; items: { menuItemId: string | number; quantity: number }[] }): Promise<{ id?: string | number; data?: { id: string | number }; [key: string]: any }> {
+    return apiService.post('/restaurant/orders', data);
   }
 
   async updateOrderStatus(orderId: string, status: string): Promise<Order> {
@@ -101,9 +101,16 @@ class RestaurantApi {
     return apiService.delete<void>(`/restaurant/staff/${id}`);
   }
 
-  // Bills/Invoices
-  async createBill(billData: Partial<Invoice>): Promise<Invoice> {
-    return apiService.post<Invoice>('/bills', billData);
+  // Bills/Invoices - Updated for final bill generation
+  async createBill(data: { 
+    tableId: string | number; 
+    tableName?: string;
+    items: { menuItemId?: string; name: string; quantity: number; price: number }[];
+    discount?: number;
+    gstPercentage?: number;
+    [key: string]: any;
+  }): Promise<{ id?: string | number; [key: string]: any }> {
+    return apiService.post('/bills', data);
   }
 
   async getBills(filters?: any): Promise<Invoice[]> {
@@ -142,6 +149,13 @@ class RestaurantApi {
     const queryParams = new URLSearchParams(filters).toString();
     const endpoint = queryParams ? `/restaurant/expenses?${queryParams}` : '/restaurant/expenses';
     return apiService.get<Expense[]>(endpoint);
+  }
+
+  // New methods for POS flow
+  
+  // Update table status (e.g., FREE, OCCUPIED, BILL_PENDING)
+  async updateTableStatus(tableId: string | number, status: string): Promise<any> {
+    return apiService.patch(`/restaurant/tables/${tableId}/status`, { status });
   }
 }
 
