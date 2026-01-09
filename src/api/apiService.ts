@@ -113,35 +113,66 @@ class ApiService {
 
   // Auth endpoints
   async login(username: string, password: string): Promise<AuthResponse> {
-    const response = await this.post<AuthResponse>('/auth/login', {
+    const backendResponse: any = await this.post('/auth/login', {
       username,
       password,
     });
     
-    // Store token and user
-    if (response.token) {
-      localStorage.setItem('authToken', response.token);
-      localStorage.setItem('token', response.token); // Also store as 'token' for compatibility
-      localStorage.setItem('user', JSON.stringify(response.user));
+    // Backend returns: { success: true, message: "...", data: { token, username, role, shopId, shopName } }
+    if (backendResponse.success && backendResponse.data) {
+      const { token, username: user, role, shopId, shopName, userType } = backendResponse.data;
       
-      // Store individual fields for easy access
-      localStorage.setItem('username', response.user.username);
-      localStorage.setItem('role', response.user.role);
-      if (response.user.restaurantId) {
-        localStorage.setItem('shopId', response.user.restaurantId);
-      }
+      // Store all auth data
+      localStorage.setItem('authToken', token);
+      localStorage.setItem('token', token);
+      localStorage.setItem('username', user);
+      localStorage.setItem('role', role);
+      localStorage.setItem('userType', userType || 'OWNER');
+      localStorage.setItem('shopId', String(shopId));
+      localStorage.setItem('shopName', shopName || '');
+      localStorage.setItem('user', JSON.stringify(backendResponse.data));
+      
+      // Return the data part for frontend use
+      return backendResponse.data;
     }
     
-    return response;
+    throw new Error(backendResponse.message || 'Login failed');
   }
 
   async register(data: any): Promise<AuthResponse> {
-    return this.post<AuthResponse>('/auth/register', data);
+    const backendResponse: any = await this.post('/auth/register', data);
+    
+    // Backend returns: { success: true, message: "...", data: { token, username, role, shopId, shopName } }
+    if (backendResponse.success && backendResponse.data) {
+      const { token, username, role, shopId, shopName, userType } = backendResponse.data;
+      
+      // Store all auth data
+      localStorage.setItem('authToken', token);
+      localStorage.setItem('token', token);
+      localStorage.setItem('username', username);
+      localStorage.setItem('role', role);
+      localStorage.setItem('userType', userType || 'OWNER');
+      localStorage.setItem('shopId', String(shopId));
+      localStorage.setItem('shopName', shopName || '');
+      localStorage.setItem('user', JSON.stringify(backendResponse.data));
+      
+      // Return the data part for frontend use
+      return backendResponse.data;
+    }
+    
+    throw new Error(backendResponse.message || 'Registration failed');
   }
 
   logout(): void {
+    // Clear all auth data
     localStorage.removeItem('authToken');
+    localStorage.removeItem('token');
     localStorage.removeItem('user');
+    localStorage.removeItem('username');
+    localStorage.removeItem('role');
+    localStorage.removeItem('userType');
+    localStorage.removeItem('shopId');
+    localStorage.removeItem('shopName');
     window.location.href = '/login';
   }
 }

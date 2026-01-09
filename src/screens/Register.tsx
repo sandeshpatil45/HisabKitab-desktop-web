@@ -61,16 +61,16 @@ export default function Register() {
         shopPhone: formData.shopPhone.trim() || formData.phone.trim() || '+91',
         gstNumber: formData.gstNumber.trim() || '27XXXXX1234X1ZX',
         defaultLanguage: 'ENGLISH',
-        businessType: 'RESTAURANT', // Default business type
+        businessType: 'RESTAURANT',
       });
 
+      // Response is already unwrapped by apiService.register()
+      // response = { token, username, role, shopId, shopName }
       if (response.token) {
-        // Store token and user
-        localStorage.setItem('authToken', response.token);
-        localStorage.setItem('user', JSON.stringify(response.user));
-        
-        // Navigate to tables after successful registration
+        // Successfully registered and token stored
         navigate('/tables');
+      } else {
+        throw new Error('Registration failed: No token received');
       }
     } catch (err: any) {
       setError(err.message || 'Registration failed. Please try again.');

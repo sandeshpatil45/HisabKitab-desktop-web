@@ -30,9 +30,13 @@ export default function Login() {
     try {
       const response = await apiService.login(username, password);
       
+      // Response is already unwrapped by apiService.login()
+      // response = { token, username, role, shopId, shopName }
       if (response.token) {
-        // Successfully logged in, navigate to tables
+        // Successfully logged in and token stored
         navigate('/tables');
+      } else {
+        throw new Error('Login failed: No token received');
       }
     } catch (err: any) {
       setError(err.message || 'Login failed. Please check your credentials.');

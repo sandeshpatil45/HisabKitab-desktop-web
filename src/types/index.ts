@@ -12,7 +12,17 @@ export interface User {
 
 export interface AuthResponse {
   token: string;
-  user: User;
+  username: string;
+  role: string;
+  userType: string;  // "OWNER" or "STAFF"
+  shopId: number;
+  shopName: string;
+}
+
+export interface BackendApiResponse<T> {
+  success: boolean;
+  message: string;
+  data: T;
 }
 
 export interface Product {
