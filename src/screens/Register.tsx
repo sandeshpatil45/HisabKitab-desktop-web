@@ -68,7 +68,15 @@ export default function Register() {
       // response = { token, username, role, shopId, shopName }
       if (response.token) {
         // Successfully registered and token stored
-        navigate('/tables');
+        // Check if onboarding complete
+        const onboardingComplete = localStorage.getItem('onboardingComplete');
+        
+        if (onboardingComplete === 'true') {
+          navigate('/tables');
+        } else {
+          // New user - start onboarding
+          navigate('/onboarding/business-details');
+        }
       } else {
         throw new Error('Registration failed: No token received');
       }

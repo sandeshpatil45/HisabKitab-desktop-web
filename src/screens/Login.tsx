@@ -34,7 +34,14 @@ export default function Login() {
       // response = { token, username, role, shopId, shopName }
       if (response.token) {
         // Successfully logged in and token stored
-        navigate('/tables');
+        const onboardingComplete = localStorage.getItem('onboardingComplete');
+        
+        if (onboardingComplete === 'true') {
+          navigate('/tables');
+        } else {
+          // Incomplete onboarding - resume
+          navigate('/onboarding/business-details');
+        }
       } else {
         throw new Error('Login failed: No token received');
       }

@@ -1,9 +1,17 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import ProtectedRoute from './components/ProtectedRoute';
+import OnboardingLayout from './components/OnboardingLayout';
 
 // Screens
 import Login from './screens/Login';
 import Register from './screens/Register';
+
+// Onboarding
+import BusinessDetailsScreen from './screens/onboarding/BusinessDetailsScreen';
+import BulkMenuAddScreen from './screens/onboarding/BulkMenuAddScreen';
+import SubscriptionScreen from './screens/onboarding/SubscriptionScreen';
+
+// Main App
 import Tables from './screens/Tables';
 import Billing from './screens/Billing';
 import Menu from './screens/Menu';
@@ -21,6 +29,13 @@ function App() {
         {/* Public Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+
+        {/* Onboarding Routes */}
+        <Route path="/onboarding" element={<OnboardingLayout />}>
+          <Route path="business-details" element={<BusinessDetailsScreen />} />
+          <Route path="bulk-menu" element={<BulkMenuAddScreen />} />
+          <Route path="subscription" element={<SubscriptionScreen />} />
+        </Route>
         
         {/* Protected Routes - Wrapped in ProtectedRoute which adds Layout */}
         <Route path="/" element={<Navigate to="/tables" replace />} />
