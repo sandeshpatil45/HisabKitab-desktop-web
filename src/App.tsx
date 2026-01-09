@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import ProtectedRoute from './components/ProtectedRoute';
+import Layout from './components/Layout';
 
 // Screens
 import Login from './screens/Login';
@@ -18,91 +18,25 @@ function App() {
   return (
     <Router>
       <Routes>
+        {/* Public Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         
-        <Route
-          path="/tables"
-          element={
-            <ProtectedRoute>
-              <Tables />
-            </ProtectedRoute>
-          }
-        />
-        
-        <Route
-          path="/billing/:tableId"
-          element={
-            <ProtectedRoute>
-              <Billing />
-            </ProtectedRoute>
-          }
-        />
-        
-        <Route
-          path="/menu"
-          element={
-            <ProtectedRoute>
-              <Menu />
-            </ProtectedRoute>
-          }
-        />
-        
-        <Route
-          path="/staff"
-          element={
-            <ProtectedRoute>
-              <Staff />
-            </ProtectedRoute>
-          }
-        />
-        
-        <Route
-          path="/invoices"
-          element={
-            <ProtectedRoute>
-              <Invoices />
-            </ProtectedRoute>
-          }
-        />
-        
-        <Route
-          path="/reports"
-          element={
-            <ProtectedRoute>
-              <Reports />
-            </ProtectedRoute>
-          }
-        />
-        
-        <Route
-          path="/order-rolls"
-          element={
-            <ProtectedRoute>
-              <OrderRolls />
-            </ProtectedRoute>
-          }
-        />
-        
-        <Route
-          path="/subscription"
-          element={
-            <ProtectedRoute>
-              <Subscription />
-            </ProtectedRoute>
-          }
-        />
-        
-        <Route
-          path="/settings"
-          element={
-            <ProtectedRoute>
-              <Settings />
-            </ProtectedRoute>
-          }
-        />
-        
-        <Route path="/" element={<Navigate to="/tables" replace />} />
+        {/* Protected Routes - Wrapped in Layout */}
+        <Route element={<Layout />}>
+          <Route path="/" element={<Navigate to="/tables" replace />} />
+          <Route path="/tables" element={<Tables />} />
+          <Route path="/tables/:id/billing" element={<Billing />} />
+          <Route path="/menu" element={<Menu />} />
+          <Route path="/staff" element={<Staff />} />
+          <Route path="/invoices" element={<Invoices />} />
+          <Route path="/reports" element={<Reports />} />
+          <Route path="/order-rolls" element={<OrderRolls />} />
+          <Route path="/subscription" element={<Subscription />} />
+          <Route path="/settings" element={<Settings />} />
+        </Route>
+
+        {/* Fallback */}
         <Route path="*" element={<Navigate to="/tables" replace />} />
       </Routes>
     </Router>

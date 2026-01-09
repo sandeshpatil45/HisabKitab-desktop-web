@@ -17,7 +17,7 @@ const Sidebar: React.FC = () => {
   };
 
   const menuItems = [
-    { path: '/tables', label: 'Tables', icon: '🏠', show: true },
+    { path: '/tables', label: 'Tables', icon: '🍽️', show: true },
     { path: '/menu', label: 'Menu', icon: '📋', show: true },
     { path: '/staff', label: 'Staff', icon: '👥', show: roleCheck.canManageStaff() },
     { path: '/invoices', label: 'Invoices', icon: '📄', show: roleCheck.canManageBilling() },
@@ -30,8 +30,15 @@ const Sidebar: React.FC = () => {
   return (
     <aside className="w-64 bg-white shadow-lg h-screen flex flex-col">
       <div className="p-6 border-b">
-        <h1 className="text-2xl font-bold text-primary">HisabKitab</h1>
-        <p className="text-sm text-gray-500">Restaurant POS</p>
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center text-white font-bold">
+            BB
+          </div>
+          <div>
+            <h1 className="text-lg font-bold text-gray-800">BillBharat</h1>
+            <p className="text-xs text-gray-500">Restaurant POS</p>
+          </div>
+        </div>
       </div>
 
       <nav className="flex-1 overflow-y-auto py-4">
