@@ -61,10 +61,10 @@ export interface OrderItem {
   total: number;
   discount?: number;
   discountPercentage?: number;
-  gstPercentage: number;
-  cgst: number;
-  sgst: number;
-  itemTotal: number;
+  gstPercentage?: number;
+  cgst?: number;
+  sgst?: number;
+  itemTotal?: number;
   isQuickAdd?: boolean;
 }
 
@@ -113,4 +113,33 @@ export interface BillCalculation {
   cgstPercentage: number;
   sgstPercentage: number;
   grandTotal: number;
+}
+
+// Additional types for KOT flow
+export interface KOT {
+  id: string | number;
+  kotNumber: number;
+  items: OrderItem[];
+  timestamp: Date | string;
+  tableId?: string;
+  tableName?: string;
+}
+
+export interface CreateOrderRequest {
+  tableId: string | number;
+  items: {
+    menuItemId: string | number;
+    quantity: number;
+  }[];
+}
+
+export interface CreateBillRequest {
+  tableId: string | number;
+  items: {
+    menuItemId: string | number;
+    quantity: number;
+    price: number;
+  }[];
+  discount?: number;
+  gstPercentage?: number;
 }

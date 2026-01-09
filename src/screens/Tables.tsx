@@ -22,8 +22,20 @@ export default function Tables() {
   const loadTables = async () => {
     try {
       setLoading(true);
-      const data = await restaurantApi.getTables();
-      setTables(data);
+      const response = await restaurantApi.getTables();
+      
+      // Backend returns: { success: true, data: [...] } or direct array
+      let tablesData: Table[] = [];
+      
+      if (response && typeof response === 'object') {
+        if ('data' in response && Array.isArray((response as any).data)) {
+          tablesData = (response as any).data;
+        } else if (Array.isArray(response)) {
+          tablesData = response;
+        }
+      }
+      
+      setTables(tablesData);
       setError('');
     } catch (err: any) {
       setError(err.message || 'Failed to load tables');
