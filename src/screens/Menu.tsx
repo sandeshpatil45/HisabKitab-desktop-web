@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { restaurantApi } from '../api/restaurantApi';
 import type { MenuItem } from '../types/restaurant';
 import { roleCheck } from '../utils/roleCheck';
 
-const Menu: React.FC = () => {
+export default function Menu() {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -78,6 +78,4 @@ const Menu: React.FC = () => {
       )}
     </div>
   );
-};
-
-export default Menu;
+}

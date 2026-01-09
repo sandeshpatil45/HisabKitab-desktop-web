@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { restaurantApi } from '../api/restaurantApi';
 import type { Staff } from '../types/restaurant';
 import { roleCheck } from '../utils/roleCheck';
 
-const StaffScreen: React.FC = () => {
+export default function StaffScreen() {
   const [staff, setStaff] = useState<Staff[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -87,6 +87,4 @@ const StaffScreen: React.FC = () => {
       )}
     </div>
   );
-};
-
-export default StaffScreen;
+}

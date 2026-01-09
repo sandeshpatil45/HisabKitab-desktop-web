@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { validation } from '../utils/validation';
 import { roleCheck } from '../utils/roleCheck';
 
-const OrderRolls: React.FC = () => {
+export default function OrderRolls() {
   const [printerType, setPrinterType] = useState<'58mm' | '80mm'>('80mm');
   const [quantity, setQuantity] = useState('');
   const [error, setError] = useState('');
@@ -120,6 +120,4 @@ const OrderRolls: React.FC = () => {
       </div>
     </div>
   );
-};
-
-export default OrderRolls;
+}

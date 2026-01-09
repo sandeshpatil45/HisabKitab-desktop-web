@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { restaurantApi } from '../api/restaurantApi';
 import { roleCheck } from '../utils/roleCheck';
 
-const Reports: React.FC = () => {
+export default function Reports() {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [activeReport, setActiveReport] = useState<'sales' | 'orders' | 'items' | 'expenses'>('sales');
@@ -156,6 +156,4 @@ const Reports: React.FC = () => {
       )}
     </div>
   );
-};
-
-export default Reports;
+}
