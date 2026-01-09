@@ -18,6 +18,9 @@ const DEFAULT_CATEGORIES = [
   'Desserts',
 ];
 
+const MAX_MENU_ROWS = 50;
+const MIN_MENU_ROWS = 1;
+
 export default function BulkMenuAddScreen() {
   const navigate = useNavigate();
   const [rows, setRows] = useState<MenuRow[]>([
@@ -28,15 +31,15 @@ export default function BulkMenuAddScreen() {
   const [error, setError] = useState('');
 
   const handleAddRow = () => {
-    if (rows.length >= 50) {
-      alert('Maximum 50 items allowed');
+    if (rows.length >= MAX_MENU_ROWS) {
+      alert(`Maximum ${MAX_MENU_ROWS} items allowed`);
       return;
     }
     setRows([...rows, { id: Date.now().toString(), itemName: '', price: '', category: '', isVeg: true }]);
   };
 
   const handleRemoveRow = (id: string) => {
-    if (rows.length === 1) {
+    if (rows.length === MIN_MENU_ROWS) {
       alert('At least one row is required');
       return;
     }
@@ -226,7 +229,7 @@ export default function BulkMenuAddScreen() {
       {/* Add Row Button */}
       <button
         onClick={handleAddRow}
-        disabled={loading || rows.length >= 50}
+        disabled={loading || rows.length >= MAX_MENU_ROWS}
         className="mb-6 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded font-medium disabled:opacity-50 disabled:cursor-not-allowed"
       >
         + Add Row

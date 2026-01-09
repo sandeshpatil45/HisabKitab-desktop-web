@@ -3,6 +3,11 @@ import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { restaurantApi } from '../api/restaurantApi';
 import type { Order, OrderItem, Table } from '../types/restaurant';
 
+// GST Configuration
+const DEFAULT_GST_PERCENTAGE = 5;
+const DEFAULT_CGST_PERCENTAGE = 2.5;
+const DEFAULT_SGST_PERCENTAGE = 2.5;
+
 export default function InvoiceScreen() {
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
@@ -72,11 +77,9 @@ export default function InvoiceScreen() {
     const discountAmount = (subtotal * discountPercent) / 100;
     const taxableAmount = subtotal - discountAmount;
 
-    // GST 5% (2.5% CGST + 2.5% SGST)
-    const cgstPercentage = 2.5;
-    const sgstPercentage = 2.5;
-    const cgst = (taxableAmount * cgstPercentage) / 100;
-    const sgst = (taxableAmount * sgstPercentage) / 100;
+    // GST calculation using constants
+    const cgst = (taxableAmount * DEFAULT_CGST_PERCENTAGE) / 100;
+    const sgst = (taxableAmount * DEFAULT_SGST_PERCENTAGE) / 100;
     const grandTotal = taxableAmount + cgst + sgst;
 
     return {
@@ -85,8 +88,8 @@ export default function InvoiceScreen() {
       discountPercent,
       cgst,
       sgst,
-      cgstPercentage,
-      sgstPercentage,
+      cgstPercentage: DEFAULT_CGST_PERCENTAGE,
+      sgstPercentage: DEFAULT_SGST_PERCENTAGE,
       grandTotal,
     };
   };
@@ -117,7 +120,7 @@ export default function InvoiceScreen() {
           price: item.price,
         })),
         discount: discountPercent,
-        gstPercentage: 5,
+        gstPercentage: DEFAULT_GST_PERCENTAGE,
         ...billCalc,
       });
 

@@ -68,7 +68,7 @@ class RestaurantApi {
   }
 
   // Orders - Updated for KOT flow
-  async createOrder(data: { tableId: string | number; items: { menuItemId: string | number; quantity: number }[] }): Promise<any> {
+  async createOrder(data: { tableId: string | number; items: { menuItemId: string | number; quantity: number }[] }): Promise<{ id?: string | number; data?: { id: string | number }; [key: string]: any }> {
     return apiService.post('/restaurant/orders', data);
   }
 
@@ -102,7 +102,14 @@ class RestaurantApi {
   }
 
   // Bills/Invoices - Updated for final bill generation
-  async createBill(data: any): Promise<any> {
+  async createBill(data: { 
+    tableId: string | number; 
+    tableName?: string;
+    items: { menuItemId?: string; name: string; quantity: number; price: number }[];
+    discount?: number;
+    gstPercentage?: number;
+    [key: string]: any;
+  }): Promise<{ id?: string | number; [key: string]: any }> {
     return apiService.post('/bills', data);
   }
 
