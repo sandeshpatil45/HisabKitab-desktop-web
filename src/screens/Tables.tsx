@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Layout from '../components/Layout';
 import TableCard from '../components/TableCard';
 import { restaurantApi } from '../api/restaurantApi';
 import type { Table, TableStatus } from '../types/restaurant';
@@ -52,7 +51,7 @@ const Tables: React.FC = () => {
   };
 
   const handleTableClick = (table: Table) => {
-    navigate(`/billing/${table.id}`, { state: { table } });
+    navigate(`/tables/${table.id}/billing`, { state: { table } });
   };
 
   const handleAddTable = async () => {
@@ -122,10 +121,9 @@ const Tables: React.FC = () => {
   const status = getTableStatus();
 
   return (
-    <Layout title="Tables">
-      <div className="space-y-6">
-        {/* Status Summary */}
-        <div className="flex items-center justify-between">
+    <div className="space-y-6">
+      {/* Status Summary */}
+      <div className="flex items-center justify-between">
           <div className="flex space-x-4">
             <div className="bg-green-100 px-4 py-2 rounded-lg">
               <span className="text-green-700 font-semibold">{status.free} Free</span>
@@ -299,7 +297,7 @@ const Tables: React.FC = () => {
           </div>
         </div>
       )}
-    </Layout>
+    </div>
   );
 };
 

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
-import Layout from '../components/Layout';
 import ItemCard from '../components/ItemCard';
 import BillSummary from '../components/BillSummary';
 import { restaurantApi } from '../api/restaurantApi';
@@ -10,11 +9,12 @@ import { roleCheck } from '../utils/roleCheck';
 import { validation } from '../utils/validation';
 
 const Billing: React.FC = () => {
-  const { tableId } = useParams<{ tableId: string }>();
+  const { id } = useParams<{ id: string }>();
   const location = useLocation();
   const navigate = useNavigate();
   
   const table = location.state?.table as Table | undefined;
+  const tableId = id; // Use id from route params
 
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
@@ -264,17 +264,14 @@ const Billing: React.FC = () => {
 
   if (loading) {
     return (
-      <Layout title={`Billing - ${table?.name || 'Table'}`}>
-        <div className="text-center py-12">
-          <p className="text-gray-500">Loading...</p>
-        </div>
-      </Layout>
+      <div className="text-center py-12">
+        <p className="text-gray-500">Loading...</p>
+      </div>
     );
   }
 
   return (
-    <Layout title={`Billing - ${table?.name || 'Table'}`}>
-      <div className="flex gap-4 h-full">
+    <div className="flex gap-4 h-full">
         {/* LEFT PANEL - Categories & Menu Items */}
         <div className="w-[30%] flex flex-col space-y-4">
           {/* Categories */}
@@ -607,7 +604,7 @@ const Billing: React.FC = () => {
           </div>
         </div>
       )}
-    </Layout>
+    </div>
   );
 };
 

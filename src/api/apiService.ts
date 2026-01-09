@@ -121,7 +121,15 @@ class ApiService {
     // Store token and user
     if (response.token) {
       localStorage.setItem('authToken', response.token);
+      localStorage.setItem('token', response.token); // Also store as 'token' for compatibility
       localStorage.setItem('user', JSON.stringify(response.user));
+      
+      // Store individual fields for easy access
+      localStorage.setItem('username', response.user.username);
+      localStorage.setItem('role', response.user.role);
+      if (response.user.restaurantId) {
+        localStorage.setItem('shopId', response.user.restaurantId);
+      }
     }
     
     return response;

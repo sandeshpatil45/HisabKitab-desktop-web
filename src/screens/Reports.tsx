@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Layout from '../components/Layout';
 import { restaurantApi } from '../api/restaurantApi';
 import { roleCheck } from '../utils/roleCheck';
 
@@ -48,17 +47,14 @@ const Reports: React.FC = () => {
 
   if (!canAccess) {
     return (
-      <Layout title="Reports">
-        <div className="text-center py-12">
-          <p className="text-gray-500">You don't have permission to access this page.</p>
-        </div>
-      </Layout>
+      <div className="text-center py-12">
+        <p className="text-gray-500">You don't have permission to access this page.</p>
+      </div>
     );
   }
 
   return (
-    <Layout title="Reports">
-      <div className="space-y-6">
+    <div className="space-y-6">
         {/* Report Type Selector */}
         <div className="flex space-x-2">
           <button
@@ -159,7 +155,7 @@ const Reports: React.FC = () => {
           </div>
         )}
       </div>
-    </Layout>
+    </div>
   );
 };
 

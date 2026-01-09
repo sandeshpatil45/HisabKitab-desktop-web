@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import Layout from '../components/Layout';
 import { restaurantApi } from '../api/restaurantApi';
 import type { MenuItem } from '../types/restaurant';
 import { roleCheck } from '../utils/roleCheck';
@@ -30,9 +29,8 @@ const Menu: React.FC = () => {
   };
 
   return (
-    <Layout title="Menu Management">
-      <div className="space-y-6">
-        {canManage && (
+    <div className="space-y-6">
+      {canManage && (
           <div className="flex justify-between items-center">
             <p className="text-gray-600">Manage your restaurant menu items</p>
             <button className="btn-primary">+ Add Menu Item</button>
@@ -79,7 +77,7 @@ const Menu: React.FC = () => {
           </div>
         )}
       </div>
-    </Layout>
+    </div>
   );
 };
 

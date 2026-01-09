@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import Layout from '../components/Layout';
 import { restaurantApi } from '../api/restaurantApi';
 import type { RestaurantSettings } from '../types';
 import { authService } from '../utils/authService';
@@ -49,9 +48,8 @@ const Settings: React.FC = () => {
   };
 
   return (
-    <Layout title="Settings">
-      <div className="max-w-4xl mx-auto">
-        <div className="space-y-6">
+    <div className="max-w-4xl mx-auto">
+      <div className="space-y-6">
           {/* User Info */}
           <div className="card">
             <h3 className="text-xl font-bold mb-4">User Information</h3>
@@ -210,7 +208,7 @@ const Settings: React.FC = () => {
           </div>
         </div>
       </div>
-    </Layout>
+    </div>
   );
 };
 
