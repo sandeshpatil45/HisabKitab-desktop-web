@@ -69,6 +69,8 @@ class ApiService {
       const response = await Promise.race([
         fetch(url, {
           ...options,
+          mode: 'cors',
+          credentials: 'omit',
           headers: { ...headers, ...(options.headers as Record<string, string> || {}) },
         }),
         timeoutPromise

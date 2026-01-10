@@ -48,7 +48,8 @@ cp .env.example .env
 
 4. Update the `.env` file with your backend API URL:
 ```env
-VITE_API_BASE_URL=http://localhost:8080/api
+# Do NOT include /api suffix - it's added automatically
+VITE_API_BASE_URL=http://192.168.1.9:8080
 ```
 
 ## 🚀 Development
@@ -68,6 +69,34 @@ npm run build
 ```
 
 The built files will be in the `dist/` directory.
+
+## 🔧 Troubleshooting
+
+### CORS Errors
+- Ensure backend has CORS enabled for your frontend origin
+- Backend must allow `http://localhost:5173` in development
+- Check backend CORS configuration in application properties
+
+### Network Errors
+- Verify backend is running at the configured URL
+- Check `.env` file has correct `VITE_API_BASE_URL`
+- Ensure URL does NOT include `/api` suffix (added automatically)
+- Test backend health: `curl http://192.168.1.9:8080/api/health`
+
+### Blank Screens
+- Open browser console (F12) and check for API errors
+- Look for 401 (unauthorized) - clear localStorage and login again
+- Look for 404 (not found) - verify backend endpoints
+- Check network tab for failed requests
+
+### Common Issues
+1. **"tables.filter is not a function"** - Already fixed with ApiResponse wrapper handling
+2. **"Cannot connect to server"** - Backend is not running or URL is incorrect
+3. **Login fails** - Check username/password, verify backend auth endpoint
+4. **Menu items not loading** - Check backend menu endpoint, ensure data exists
+
+### Debug Mode
+Enable React DevTools and check component states. All API errors are logged to console.
 
 ## 📱 User Roles & Permissions
 

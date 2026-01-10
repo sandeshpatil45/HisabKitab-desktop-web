@@ -102,7 +102,7 @@ export default function Billing() {
       
       // Recalculate GST
       const itemTotal = updatedItems[existingItemIndex].total;
-      const gstAmount = (itemTotal * updatedItems[existingItemIndex].gstPercentage) / 100;
+      const gstAmount = (itemTotal * (updatedItems[existingItemIndex].gstPercentage || 0)) / 100;
       updatedItems[existingItemIndex].cgst = gstAmount / 2;
       updatedItems[existingItemIndex].sgst = gstAmount / 2;
       updatedItems[existingItemIndex].itemTotal = itemTotal + gstAmount;
@@ -163,7 +163,7 @@ export default function Billing() {
       
       // Recalculate GST
       const itemTotal = updatedItems[index].total;
-      const gstAmount = (itemTotal * updatedItems[index].gstPercentage) / 100;
+      const gstAmount = (itemTotal * (updatedItems[index].gstPercentage || 0)) / 100;
       updatedItems[index].cgst = gstAmount / 2;
       updatedItems[index].sgst = gstAmount / 2;
       updatedItems[index].itemTotal = itemTotal + gstAmount;
@@ -196,7 +196,7 @@ export default function Billing() {
       : 0;
     const taxableAmount = itemTotal - discountAmount;
     
-    const gstAmount = (taxableAmount * updatedItems[index].gstPercentage) / 100;
+    const gstAmount = (taxableAmount * (updatedItems[index].gstPercentage || 0)) / 100;
     updatedItems[index].cgst = gstAmount / 2;
     updatedItems[index].sgst = gstAmount / 2;
     updatedItems[index].itemTotal = taxableAmount + gstAmount;
@@ -215,14 +215,14 @@ export default function Billing() {
 
     try {
       const orderData = {
-        tableId,
+        tableId: tableId || '',
         tableName: table?.name || `Table ${tableId}`,
         items: billItems,
         status: 'KOT_SENT' as const,
         ...calculateBill(),
       };
 
-      await restaurantApi.createOrder(orderData);
+      await restaurantApi.createOrder(orderData as any);
       alert('KOT sent successfully!');
     } catch (err: any) {
       alert(err.message || 'Failed to send KOT');
@@ -245,14 +245,14 @@ export default function Billing() {
 
     try {
       const billData = {
-        tableId,
+        tableId: tableId || '',
         tableName: table?.name || `Table ${tableId}`,
         items: billItems,
         ...calculateBill(),
         status: 'FINALIZED' as const,
       };
 
-      await restaurantApi.createBill(billData);
+      await restaurantApi.createBill(billData as any);
       alert('Bill saved successfully!');
       navigate('/tables');
     } catch (err: any) {
@@ -325,7 +325,7 @@ export default function Billing() {
                   </div>
                   {canSeePrices && (
                     <span className="font-bold text-primary">
-                      ₹{item.itemTotal.toFixed(2)}
+                      ₹{(item.itemTotal || 0).toFixed(2)}
                     </span>
                   )}
                 </div>
@@ -490,15 +490,15 @@ export default function Billing() {
               <div className="text-sm space-y-1">
                 <div className="flex justify-between">
                   <span>GST:</span>
-                  <span>{editingItem.gstPercentage}%</span>
+                  <span>{editingItem.gstPercentage || 0}%</span>
                 </div>
                 <div className="flex justify-between">
                   <span>CGST:</span>
-                  <span>{editingItem.gstPercentage / 2}%</span>
+                  <span>{(editingItem.gstPercentage || 0) / 2}%</span>
                 </div>
                 <div className="flex justify-between">
                   <span>SGST:</span>
-                  <span>{editingItem.gstPercentage / 2}%</span>
+                  <span>{(editingItem.gstPercentage || 0) / 2}%</span>
                 </div>
               </div>
             </div>
@@ -540,7 +540,7 @@ export default function Billing() {
                   {billItems.map((item, index) => (
                     <div key={index} className="flex justify-between text-sm">
                       <span>{item.name} × {item.quantity}</span>
-                      <span>₹{item.itemTotal.toFixed(2)}</span>
+                      <span>₹{(item.itemTotal || 0).toFixed(2)}</span>
                     </div>
                   ))}
                 </div>

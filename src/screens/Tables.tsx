@@ -98,8 +98,8 @@ export default function Tables() {
 
     try {
       await restaurantApi.createTable({
-        name: tableName,
-        capacity: parseInt(tableCapacity),
+        tableName: tableName,
+        capacity: parseInt(tableCapacity) || 4,
         status: 'FREE',
       });
       
