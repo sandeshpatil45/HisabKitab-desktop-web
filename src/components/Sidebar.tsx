@@ -16,11 +16,8 @@ export default function Sidebar() {
   const navItems = [
     { path: '/tables', label: 'Tables', icon: '🍽️', staffAccess: true },
     { path: '/kitchen-orders', label: 'Kitchen Orders', icon: '👨‍🍳', staffAccess: true },
-    { path: '/menu', label: 'Menu', icon: '📋', staffAccess: true },
-    { path: '/staff', label: 'Staff', icon: '👥', staffAccess: false },
     { path: '/invoices', label: 'Invoices', icon: '📄', staffAccess: false },
     { path: '/reports', label: 'Reports', icon: '📊', staffAccess: false },
-    { path: '/order-rolls', label: 'Order Rolls', icon: '🧻', staffAccess: false },
     { path: '/subscription', label: 'Subscription', icon: '💳', staffAccess: false },
     { path: '/settings', label: 'Settings', icon: '⚙️', staffAccess: false },
   ];

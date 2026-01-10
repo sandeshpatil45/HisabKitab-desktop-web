@@ -31,7 +31,7 @@ class RestaurantApi {
     return Array.isArray(tablesData) ? tablesData : response;
   }
 
-  async createTable(tableData: Partial<Table>): Promise<Table> {
+  async createTable(tableData: Partial<Table> | any): Promise<Table> {
     return apiService.post<Table>('/api/restaurant/tables', tableData);
   }
 
