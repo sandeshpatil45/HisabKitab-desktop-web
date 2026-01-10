@@ -22,8 +22,13 @@ class RestaurantApi {
   }
 
   // Tables
-  async getTables(): Promise<Table[]> {
-    return apiService.get<Table[]>('/restaurant/tables');
+  async getTables(): Promise<Table[] | any> {
+    const response = await apiService.get('/restaurant/tables');
+    
+    // Handle ApiResponse wrapper
+    const tablesData = (response as any)?.data || response;
+    
+    return Array.isArray(tablesData) ? tablesData : response;
   }
 
   async createTable(tableData: Partial<Table>): Promise<Table> {
@@ -44,7 +49,12 @@ class RestaurantApi {
 
   // Menu
   async getMenu(): Promise<MenuItem[]> {
-    return apiService.get<MenuItem[]>('/restaurant/menu');
+    const response = await apiService.get('/restaurant/menu');
+    
+    // Handle ApiResponse wrapper
+    const menuData = (response as any)?.data || response;
+    
+    return Array.isArray(menuData) ? menuData : [];
   }
 
   async getMenuCategories(): Promise<MenuCategory[]> {

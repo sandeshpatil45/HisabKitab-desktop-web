@@ -15,6 +15,7 @@ export default function Sidebar() {
 
   const navItems = [
     { path: '/tables', label: 'Tables', icon: '🍽️', staffAccess: true },
+    { path: '/kitchen-orders', label: 'Kitchen Orders', icon: '👨‍🍳', staffAccess: true },
     { path: '/menu', label: 'Menu', icon: '📋', staffAccess: true },
     { path: '/staff', label: 'Staff', icon: '👥', staffAccess: false },
     { path: '/invoices', label: 'Invoices', icon: '📄', staffAccess: false },
