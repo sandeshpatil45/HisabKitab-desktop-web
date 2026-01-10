@@ -43,8 +43,13 @@ class RestaurantApi {
     return apiService.delete<void>(`/restaurant/tables/${id}`);
   }
 
-  async getTableOrders(tableId: string): Promise<Order[]> {
-    return apiService.get<Order[]>(`/restaurant/tables/${tableId}/orders`);
+  async getTableOrders(tableId: string): Promise<Order[] | any> {
+    const response = await apiService.get(`/restaurant/tables/${tableId}/orders`);
+    
+    // Handle ApiResponse wrapper
+    const ordersData = (response as any)?.data || response;
+    
+    return Array.isArray(ordersData) ? ordersData : response;
   }
 
   // Menu

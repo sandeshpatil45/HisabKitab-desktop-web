@@ -39,10 +39,15 @@ export default function InvoiceScreen() {
     setLoading(true);
     try {
       const response = await restaurantApi.getTableOrders(tableId);
-      setOrders(response);
+      
+      // Handle ApiResponse wrapper
+      const ordersData = (response as any)?.data || response;
+      const orders = Array.isArray(ordersData) ? ordersData : [];
+      
+      setOrders(orders);
 
       // Aggregate items from all orders/KOTs
-      const aggregated = aggregateItems(response);
+      const aggregated = aggregateItems(orders);
       setAggregatedItems(aggregated);
     } catch (error: any) {
       console.error('Failed to fetch orders:', error);

@@ -46,10 +46,12 @@ export default function MenuOrderScreen() {
 
   const fetchExistingOrders = async () => {
     try {
-      const orders = await restaurantApi.getTableOrders(tableId);
+      const response = await restaurantApi.getTableOrders(tableId);
+      const orders = (response as any)?.data || response;
+      const ordersArray = Array.isArray(orders) ? orders : [];
       
       // Convert orders to KOT format
-      const kots: KOT[] = orders.map((order, index) => ({
+      const kots: KOT[] = ordersArray.map((order: any, index: number) => ({
         id: order.id,
         kotNumber: index + 1,
         items: order.items,
