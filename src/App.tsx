@@ -13,7 +13,9 @@ import SubscriptionScreen from './screens/onboarding/SubscriptionScreen';
 
 // Main App
 import Tables from './screens/Tables';
+import TableOrderScreen from './screens/TableOrderScreen';
 import MenuOrderScreen from './screens/MenuOrderScreen';
+import KitchenOrdersScreen from './screens/KitchenOrdersScreen';
 import InvoiceScreen from './screens/InvoiceScreen';
 import Billing from './screens/Billing';
 import Menu from './screens/Menu';
@@ -50,6 +52,14 @@ function App() {
           } 
         />
         <Route 
+          path="/tables/:id/order" 
+          element={
+            <ProtectedRoute>
+              <TableOrderScreen />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
           path="/tables/:id/menu-order" 
           element={
             <ProtectedRoute>
@@ -62,6 +72,14 @@ function App() {
           element={
             <ProtectedRoute>
               <InvoiceScreen />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/kitchen-orders" 
+          element={
+            <ProtectedRoute>
+              <KitchenOrdersScreen />
             </ProtectedRoute>
           } 
         />

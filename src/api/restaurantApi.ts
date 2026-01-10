@@ -22,8 +22,13 @@ class RestaurantApi {
   }
 
   // Tables
-  async getTables(): Promise<Table[]> {
-    return apiService.get<Table[]>('/restaurant/tables');
+  async getTables(): Promise<Table[] | any> {
+    const response = await apiService.get('/restaurant/tables');
+    
+    // Handle ApiResponse wrapper
+    const tablesData = (response as any)?.data || response;
+    
+    return Array.isArray(tablesData) ? tablesData : response;
   }
 
   async createTable(tableData: Partial<Table>): Promise<Table> {
@@ -38,13 +43,23 @@ class RestaurantApi {
     return apiService.delete<void>(`/restaurant/tables/${id}`);
   }
 
-  async getTableOrders(tableId: string): Promise<Order[]> {
-    return apiService.get<Order[]>(`/restaurant/tables/${tableId}/orders`);
+  async getTableOrders(tableId: string): Promise<Order[] | any> {
+    const response = await apiService.get(`/restaurant/tables/${tableId}/orders`);
+    
+    // Handle ApiResponse wrapper
+    const ordersData = (response as any)?.data || response;
+    
+    return Array.isArray(ordersData) ? ordersData : response;
   }
 
   // Menu
   async getMenu(): Promise<MenuItem[]> {
-    return apiService.get<MenuItem[]>('/restaurant/menu');
+    const response = await apiService.get('/restaurant/menu');
+    
+    // Handle ApiResponse wrapper
+    const menuData = (response as any)?.data || response;
+    
+    return Array.isArray(menuData) ? menuData : [];
   }
 
   async getMenuCategories(): Promise<MenuCategory[]> {

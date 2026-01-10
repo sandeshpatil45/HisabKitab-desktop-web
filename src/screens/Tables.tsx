@@ -27,18 +27,15 @@ export default function Tables() {
       setLoading(true);
       const response = await restaurantApi.getTables();
       
-      // Backend returns: { success: true, data: [...] } or direct array
-      let tablesData: Table[] = [];
+      // Handle ApiResponse wrapper
+      const tablesData = response?.data || response;
       
-      if (response && typeof response === 'object') {
-        if ('data' in response && Array.isArray((response as any).data)) {
-          tablesData = (response as any).data;
-        } else if (Array.isArray(response)) {
-          tablesData = response;
-        }
+      if (Array.isArray(tablesData)) {
+        setTables(tablesData);
+      } else {
+        console.error('Invalid tables response:', response);
+        setTables([]);
       }
-      
-      setTables(tablesData);
       setError('');
     } catch (err: any) {
       setError(err.message || 'Failed to load tables');
@@ -100,15 +97,18 @@ export default function Tables() {
     }
 
     try {
-      const newTable = await restaurantApi.createTable({
+      await restaurantApi.createTable({
         name: tableName,
         capacity: parseInt(tableCapacity),
         status: 'FREE',
       });
-      setTables([...tables, newTable]);
+      
       setShowAddModal(false);
       setTableName('');
       setTableCapacity('4');
+      
+      // CRITICAL: Refresh table list
+      await loadTables();
     } catch (err: any) {
       alert(err.message || 'Failed to add table');
     }
@@ -122,7 +122,7 @@ export default function Tables() {
   const handleMenuOrder = () => {
     if (!selectedTable) return;
     setShowActionModal(false);
-    navigate(`/tables/${selectedTable.id}/menu-order`, { state: { table: selectedTable } });
+    navigate(`/tables/${selectedTable.id}/order`, { state: { table: selectedTable } });
   };
 
   const handleInvoice = () => {
