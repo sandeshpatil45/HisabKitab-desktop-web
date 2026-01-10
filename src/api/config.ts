@@ -1,6 +1,7 @@
 // API Configuration
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
+// Do NOT include /api here - it's added in individual endpoints
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 
 export const config = {
   apiBaseUrl: API_BASE_URL,
